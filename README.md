@@ -125,7 +125,7 @@ https://github.com/cv-cat/XianYuApis
     </tr>
     <tr>
       <td><img src="./images/wx_group10-1.png" width="300px" alt="交流群1"></td>
-      <td><img src="./images/wx_group11-1.png" width="300px" alt="交流群2"></td>
+      <td><img src="./images/wx_group11-2.png" width="300px" alt="交流群2"></td>
     </tr>
   </table>
 </div>
