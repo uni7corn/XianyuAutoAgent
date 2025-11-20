@@ -109,12 +109,6 @@ python main.py
 
 如需学习交流，请联系：[coderxiu@qq.com](https://mailto:coderxiu@qq.com/)
 
-## 🧸特别鸣谢
-本项目参考了以下开源项目：
-https://github.com/cv-cat/XianYuApis
-
-感谢<a href="https://github.com/cv-cat">@CVcat</a>的技术支持
-
 ## 📱 交流群
 欢迎加入项目交流群，交流技术、分享经验、互助学习。
 <div align="center">
@@ -134,12 +128,10 @@ https://github.com/cv-cat/XianYuApis
 
 ### <a href="https://github.com/shaxiu">@Shaxiu</a>
 **🔍寻求方向**：**AI产品经理**  
-**🛠️项目贡献：**：需求分析、agent方案设计与实现  
 **📫 联系：** **email**:coderxiu@qq.com；**wx:** coderxiu
 
 ### <a href="https://github.com/cv-cat">@CVcat</a>
 **🔍寻求方向**：**研发工程师**（python、java、逆向、爬虫）  
-**🛠️项目贡献：**：闲鱼逆向工程  
 **📫 联系：** **email:** 992822653@qq.com；**wx:** CVZC15751076989
 ## ☕ 请喝咖啡
 您的☕和⭐将助力项目持续更新：
