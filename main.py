@@ -239,6 +239,22 @@ class XianyuLive:
             )
         except Exception:
             return False
+    
+    def is_bracket_system_message(self, message):
+        """检查是否为带中括号的系统消息"""
+        try:
+            if not message or not isinstance(message, str):
+                return False
+            
+            clean_message = message.strip()
+            # 检查是否以 [ 开头，以 ] 结尾
+            if clean_message.startswith('[') and clean_message.endswith(']'):
+                logger.debug(f"检测到系统消息: {clean_message}")
+                return True
+            return False
+        except Exception as e:
+            logger.error(f"检查系统消息失败: {e}")
+            return False
 
     def check_toggle_keywords(self, message):
         """检查消息是否包含切换关键词"""
@@ -406,6 +422,10 @@ class XianyuLive:
             # 如果当前会话处于人工接管模式，不进行自动回复
             if self.is_manual_mode(chat_id):
                 logger.info(f"🔴 会话 {chat_id} 处于人工接管模式，跳过自动回复")
+                return
+            # 检查是否为带中括号的系统消息
+            if self.is_bracket_system_message(send_message):
+                logger.info(f"检测到系统消息：'{send_message}'，跳过自动回复")
                 return
             if self.is_system_message(message):
                 logger.debug("系统消息，跳过处理")
