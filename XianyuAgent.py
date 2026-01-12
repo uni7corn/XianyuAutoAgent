@@ -28,29 +28,33 @@ class XianyuReplyBot:
         }
 
     def _init_system_prompts(self):
-        """初始化各Agent专用提示词，直接从文件中加载"""
+        """初始化各Agent专用提示词，优先加载用户自定义文件，否则使用Example默认文件"""
         prompt_dir = "prompts"
         
+        def load_prompt_content(name: str) -> str:
+            """尝试加载提示词文件"""
+            # 优先尝试加载 target.txt
+            target_path = os.path.join(prompt_dir, f"{name}.txt")
+            if os.path.exists(target_path):
+                file_path = target_path
+            else:
+                # 尝试默认提示词 target_example.txt
+                file_path = os.path.join(prompt_dir, f"{name}_example.txt")
+
+            with open(file_path, "r", encoding="utf-8") as f:
+                content = f.read()
+                logger.debug(f"已加载 {name} 提示词，路径: {file_path}, 长度: {len(content)} 字符")
+                return content
+
         try:
             # 加载分类提示词
-            with open(os.path.join(prompt_dir, "classify_prompt.txt"), "r", encoding="utf-8") as f:
-                self.classify_prompt = f.read()
-                logger.debug(f"已加载分类提示词，长度: {len(self.classify_prompt)} 字符")
-            
+            self.classify_prompt = load_prompt_content("classify_prompt")
             # 加载价格提示词
-            with open(os.path.join(prompt_dir, "price_prompt.txt"), "r", encoding="utf-8") as f:
-                self.price_prompt = f.read()
-                logger.debug(f"已加载价格提示词，长度: {len(self.price_prompt)} 字符")
-            
+            self.price_prompt = load_prompt_content("price_prompt")
             # 加载技术提示词
-            with open(os.path.join(prompt_dir, "tech_prompt.txt"), "r", encoding="utf-8") as f:
-                self.tech_prompt = f.read()
-                logger.debug(f"已加载技术提示词，长度: {len(self.tech_prompt)} 字符")
-            
+            self.tech_prompt = load_prompt_content("tech_prompt")
             # 加载默认提示词
-            with open(os.path.join(prompt_dir, "default_prompt.txt"), "r", encoding="utf-8") as f:
-                self.default_prompt = f.read()
-                logger.debug(f"已加载默认提示词，长度: {len(self.default_prompt)} 字符")
+            self.default_prompt = load_prompt_content("default_prompt")
                 
             logger.info("成功加载所有提示词")
         except Exception as e:
