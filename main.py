@@ -8,6 +8,7 @@ from loguru import logger
 from dotenv import load_dotenv, set_key
 from XianyuApis import XianyuApis
 import sys
+import random
 
 
 from utils.xianyu_utils import generate_mid, generate_uuid, trans_cookies, generate_device_id, decrypt
@@ -52,6 +53,9 @@ class XianyuLive:
         
         # 人工接管关键词，从环境变量读取
         self.toggle_keywords = os.getenv("TOGGLE_KEYWORDS", "。")
+        
+        # 模拟人工输入配置
+        self.simulate_human_typing = os.getenv("SIMULATE_HUMAN_TYPING", "False").lower() == "true"
 
     async def refresh_token(self):
         """刷新token"""
@@ -471,6 +475,19 @@ class XianyuLive:
             self.context_manager.add_message_by_chat(chat_id, self.myid, item_id, "assistant", bot_reply)
             
             logger.info(f"机器人回复: {bot_reply}")
+            
+            # 模拟人工输入延迟
+            if self.simulate_human_typing:
+                # 基础延迟 0-1秒 + 每字 0.1-0.3秒
+                base_delay = random.uniform(0, 1)
+                typing_delay = len(bot_reply) * random.uniform(0.1, 0.3)
+                total_delay = base_delay + typing_delay
+                # 设置最大延迟上限，防止过长回复等待太久
+                total_delay = min(total_delay, 10.0)
+                
+                logger.info(f"模拟人工输入，延迟发送 {total_delay:.2f} 秒...")
+                await asyncio.sleep(total_delay)
+                
             await self.send_msg(websocket, chat_id, send_user_id, bot_reply)
             
         except Exception as e:
