@@ -89,7 +89,12 @@ class XianyuReplyBot:
 
         internal_intents = {'classify'}  # 定义不对外开放的Agent
 
-        if detected_intent in self.agents and detected_intent not in internal_intents:
+        if detected_intent == 'no_reply':
+            # 无需回复的情况
+            logger.info(f'意图识别完成: no_reply - 无需回复')
+            self.last_intent = 'no_reply'
+            return "-"  # 返回特殊标记，表示无需回复
+        elif detected_intent in self.agents and detected_intent not in internal_intents:
             agent = self.agents[detected_intent]
             logger.info(f'意图识别完成: {detected_intent}')
             self.last_intent = detected_intent  # 保存当前意图

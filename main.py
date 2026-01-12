@@ -456,6 +456,11 @@ class XianyuLive:
                 context=context
             )
             
+            # 检查是否需要回复
+            if bot_reply == "-":
+                logger.info(f"[无需回复] 用户 {send_user_name} 的消息被识别为无需回复类型")
+                return
+
             # 检查是否为价格意图，如果是则增加议价次数
             if bot.last_intent == "price":
                 self.context_manager.increment_bargain_count_by_chat(chat_id)
