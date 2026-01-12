@@ -49,7 +49,7 @@
 
 
 ## 🚴 快速开始
-
+小白请直接查看[保姆级教学文档](https://my.feishu.cn/wiki/JtkBwkI9GiokZikVdyNceEfZncE)
 ### 环境要求
 - Python 3.8+
 
@@ -71,12 +71,12 @@ MODEL_BASE_URL=模型地址
 MODEL_NAME=模型名称
 #可选配置
 TOGGLE_KEYWORDS=接管模式切换关键词，默认为句号（输入句号切换为人工接管，再次输入则切换AI接管）
+SIMULATE_HUMAN_TYPING=True/False #模拟人工回复延迟
 
 注意：默认使用的模型是通义千问，如需使用其他API，请自行修改.env文件中的模型地址和模型名称；
 COOKIES_STR自行在闲鱼网页端获取cookies(网页端F12打开控制台，选择Network，点击Fetch/XHR,点击一个请求，查看cookies)
 
-4. 创建提示词文件prompts/*_prompt.txt（也可以直接将模板名称中的_example去掉）
-默认提供四个模板，可自行修改
+4. 创建提示词文件prompts/*_prompt.txt（也可以直接将模板名称中的_example去掉），否则默认读取四个提示词模板中的内容
 ```
 
 ### 使用方法
@@ -114,12 +114,12 @@ python main.py
 <div align="center">
   <table>
     <tr>
-      <td align="center"><strong>交流群13（已满200）</strong></td>
-      <td align="center"><strong>交流群14（推荐加入）</strong></td>
+      <td align="center"><strong>交流群14（已满200）</strong></td>
+      <td align="center"><strong>交流群15（推荐加入）</strong></td>
     </tr>
     <tr>
-      <td><img src="./images/wx_group13-2.png" width="300px" alt="交流群1"></td>
-      <td><img src="./images/wx_group14-3.png" width="300px" alt="交流群2"></td>
+      <td><img src="./images/wx_group14-3.png" width="300px" alt="交流群14"></td>
+      <td><img src="./images/wx_group15.jpg" width="300px" alt="交流群15"></td>
     </tr>
   </table>
 </div>
