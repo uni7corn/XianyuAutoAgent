@@ -299,6 +299,59 @@ class XianyuLive:
         else:
             self.enter_manual_mode(chat_id)
             return "manual"
+    
+    def format_price(self, price):
+        """
+        处理逻辑：标准化价格（分转元）
+        """
+        try:
+            return round(float(price) / 100, 2)
+        except (ValueError, TypeError):
+            # 遇到 None 或脏数据，默认返回 0
+            return 0.0
+    
+    def build_item_description(self, item_info):
+        """构建商品描述"""
+        
+        # 处理 SKU 列表
+        clean_skus = []
+        raw_sku_list = item_info.get('skuList', [])
+        
+        for sku in raw_sku_list:
+            # 提取规格文本
+            specs = [p['valueText'] for p in sku.get('propertyList', []) if p.get('valueText')]
+            spec_text = " ".join(specs) if specs else "默认规格"
+            
+            clean_skus.append({
+                "spec": spec_text,
+                "price": self.format_price(sku.get('price', 0)),
+                "stock": sku.get('quantity', 0)
+            })
+
+        # 获取价格
+        valid_prices = [s['price'] for s in clean_skus if s['price'] > 0]
+        
+        if valid_prices:
+            min_price = min(valid_prices)
+            max_price = max(valid_prices)
+            if min_price == max_price:
+                price_display = f"¥{min_price}"
+            else:
+                price_display = f"¥{min_price} - ¥{max_price}" # 价格区间
+        else:
+            # 如果没有SKU价格，回退使用商品主价格
+            main_price = round(float(item_info.get('soldPrice', 0)), 2)
+            price_display = f"¥{main_price}"
+
+        summary = {
+            "title": item_info.get('title', ''),
+            "desc": item_info.get('desc', ''),
+            "price_range": price_display,
+            "total_stock": item_info.get('quantity', 0),
+            "sku_details": clean_skus
+        }
+
+        return json.dumps(summary, ensure_ascii=False)
 
     async def handle_message(self, message_data, websocket):
         """处理所有类型的消息"""
@@ -420,12 +473,13 @@ class XianyuLive:
                 return
             
             logger.info(f"用户: {send_user_name} (ID: {send_user_id}), 商品: {item_id}, 会话: {chat_id}, 消息: {send_message}")
-            # 添加用户消息到上下文
-            self.context_manager.add_message_by_chat(chat_id, send_user_id, item_id, "user", send_message)
+            
             
             # 如果当前会话处于人工接管模式，不进行自动回复
             if self.is_manual_mode(chat_id):
                 logger.info(f"🔴 会话 {chat_id} 处于人工接管模式，跳过自动回复")
+                # 添加用户消息到上下文
+                self.context_manager.add_message_by_chat(chat_id, send_user_id, item_id, "user", send_message)
                 return
             # 检查是否为带中括号的系统消息
             if self.is_bracket_system_message(send_message):
@@ -449,7 +503,7 @@ class XianyuLive:
             else:
                 logger.info(f"从数据库获取商品信息: {item_id}")
                 
-            item_description = f"{item_info['desc']};当前商品售卖价格为:{str(item_info['soldPrice'])}"
+            item_description=f"当前商品的信息如下：{self.build_item_description(item_info)}"
             
             # 获取完整的对话上下文
             context = self.context_manager.get_context_by_chat(chat_id)
@@ -464,7 +518,10 @@ class XianyuLive:
             if bot_reply == "-":
                 logger.info(f"[无需回复] 用户 {send_user_name} 的消息被识别为无需回复类型")
                 return
-
+            
+            # 添加用户消息到上下文
+            self.context_manager.add_message_by_chat(chat_id, send_user_id, item_id, "user", send_message)
+            
             # 检查是否为价格意图，如果是则增加议价次数
             if bot.last_intent == "price":
                 self.context_manager.increment_bargain_count_by_chat(chat_id)
