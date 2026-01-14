@@ -182,6 +182,42 @@ class XianyuApis:
                 ret_value = res_json.get('ret', [])
                 # 检查ret是否包含成功信息
                 if not any('SUCCESS::调用成功' in ret for ret in ret_value):
+                    # 检测风控/限流错误
+                    error_msg = str(ret_value)
+                    if 'RGV587_ERROR' in error_msg or '被挤爆啦' in error_msg:
+                        logger.error(f"❌ 触发风控: {ret_value}")
+                        logger.error("🔴 系统目前无法自动解决，请进入闲鱼网页版-点击消息-过滑块-复制最新的Cookie")
+                        
+                        # 获取用户输入的新Cookie
+                        print("\n" + "="*50)
+                        new_cookie_str = input("请输入新的Cookie字符串 (复制浏览器中的完整cookie，直接回车则退出程序): ").strip()
+                        print("="*50 + "\n")
+                        
+                        if new_cookie_str:
+                            try:
+                                # 解析cookie字符串并更新session
+                                from http.cookies import SimpleCookie
+                                cookie = SimpleCookie()
+                                cookie.load(new_cookie_str)
+                                
+                                # 清空旧cookie并设置新cookie
+                                self.session.cookies.clear()
+                                for key, morsel in cookie.items():
+                                    self.session.cookies.set(key, morsel.value, domain='.goofish.com')
+                                
+                                logger.success("✅ Cookie已更新，正在尝试重连...")
+                                # 同步更新到.env文件
+                                self.update_env_cookies()
+                                
+                                # 立即重试
+                                return self.get_token(device_id, 0)
+                            except Exception as e:
+                                logger.error(f"Cookie解析失败: {e}")
+                                sys.exit(1)
+                        else:
+                            logger.info("用户取消输入，程序退出")
+                            sys.exit(1)
+
                     logger.warning(f"Token API调用失败，错误信息: {ret_value}")
                     # 处理响应中的Set-Cookie
                     if 'Set-Cookie' in response.headers:
