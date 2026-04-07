@@ -99,7 +99,11 @@ python main.py
 
 欢迎通过 Issue 提交建议或 PR 贡献代码，请遵循 [贡献指南](https://contributing.md/)
 
+## 🧸特别鸣谢
+本项目参考了以下开源项目：
+https://github.com/cv-cat/XianYuApis
 
+感谢<a href="https://github.com/cv-cat">@CVcat</a>的技术支持
 
 ## 🛡 注意事项
 

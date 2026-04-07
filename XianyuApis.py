@@ -148,7 +148,7 @@ class XianyuApis:
                 logger.error("重新登录失败，Cookie已失效")
                 logger.error("🔴 程序即将退出，请更新.env文件中的COOKIES_STR后重新启动")
                 sys.exit(1)  # 直接退出程序
-            
+
         params = {
             'jsv': '2.7.2',
             'appKey': '34839810',
@@ -162,12 +162,29 @@ class XianyuApis:
             'api': 'mtop.taobao.idlemessage.pc.login.token',
             'sessionOption': 'AutoLoginOnly',
             'spm_cnt': 'a21ybx.im.0.0',
+            "spm_pre": "a21ybx.item.want.1.14ad3da6ALVq3n",
+            "log_id": "14ad3da6ALVq3n"
         }
         data_val = '{"appKey":"444e9908a51d1cb236a27862abc769c9","deviceId":"' + device_id + '"}'
         data = {
             'data': data_val,
         }
-        
+        headers = {
+            "Host": "h5api.m.goofish.com",
+            "sec-ch-ua-platform": "\"Windows\"",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+            "accept": "application/json",
+            "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+            "content-type": "application/x-www-form-urlencoded",
+            "sec-ch-ua-mobile": "?0",
+            "origin": "https://www.goofish.com",
+            "sec-fetch-site": "same-site",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-dest": "empty",
+            "referer": "https://www.goofish.com/",
+            "accept-language": "en,zh-CN;q=0.9,zh;q=0.8,zh-TW;q=0.7,ja;q=0.6",
+            "priority": "u=1, i"
+        }
         # 简单获取token，信任cookies已清理干净
         token = self.session.cookies.get('_m_h5_tk', '').split('_')[0]
         
@@ -175,7 +192,7 @@ class XianyuApis:
         params['sign'] = sign
         
         try:
-            response = self.session.post('https://h5api.m.goofish.com/h5/mtop.taobao.idlemessage.pc.login.token/1.0/', params=params, data=data)
+            response = self.session.post('https://h5api.m.goofish.com/h5/mtop.taobao.idlemessage.pc.login.token/1.0/', headers=headers, params=params, data=data)
             res_json = response.json()
             
             if isinstance(res_json, dict):
